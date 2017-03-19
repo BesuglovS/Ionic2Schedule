@@ -4,6 +4,7 @@ import { NavController } from 'ionic-angular';
 import 'rxjs/add/operator/map';
 import * as moment from 'moment';
 import 'moment/locale/ru';
+import { Storage } from '@ionic/storage';
 
 @Component({
     selector: 'group-schedule',
@@ -16,9 +17,11 @@ export class GroupSchedulePage {
     selectedWeek: number;
     weekList: number[];
     schedule: any[];
-    
+    storage: any;
 
-    constructor(public navCtrl: NavController, public http: Http) {
+    constructor(public navCtrl: NavController, public http: Http, storage: Storage) {
+        this.storage = storage;
+
         this.weekList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
         this.selectedWeek = 1;
 
@@ -32,7 +35,11 @@ export class GroupSchedulePage {
                     moment.locale('ru');
 
                     let startMomentMonday = moment(ss.Value).startOf('week');
-                    let diffToNowInDays = moment().diff(startMomentMonday, 'days');
+                    let today = moment();
+                    if (today.isoWeekday() === 7) {
+                        today = today.add(1, 'day');
+                    }
+                    let diffToNowInDays = today.diff(startMomentMonday, 'days');
 
                     let weekNum = Math.floor(diffToNowInDays / 7) + 1;
 
@@ -43,16 +50,44 @@ export class GroupSchedulePage {
         this.http.get('http://wiki.nayanova.edu/api.php?action=list&listtype=mainStudentGroups')
             .map(res => res.json())
             .subscribe(data => {
-                this.groupList = data;
+                storage.ready().then(() => {
+                    storage.get('groupName').then((val) => {
+                        if (val !== undefined) {
+                            let search = data.filter(g => g.Name === val);
+                            
+                            if (search.length > 0) {
+                                search = search[0];
+                                this.groupList = data;
+                                this.selectedGroup = search;
+                                this.updateSchedule(http);
+                            } else {
+                                storage.remove('groupName');
 
-                if (this.groupList.length > 0) {
-                    this.selectedGroup = this.groupList[0];
-                    this.updateSchedule(http);
-                }
+                                this.groupList = data;
+                                if (this.groupList.length > 0) {
+                                    this.selectedGroup = this.groupList[0];
+                                    this.updateSchedule(http);
+                                }
+                            }
+                        } else {
+                            this.groupList = data;
+                            if (this.groupList.length > 0) {
+                                this.selectedGroup = this.groupList[0];
+                                this.updateSchedule(http);
+                            }
+                        }
+                    });
+                });
             });
     }
 
     updateSchedule(http: Http) {
+        if (this.selectedGroup !== undefined) {
+            this.storage.ready().then(() => {
+                this.storage.set('groupName', this.selectedGroup.Name);
+            });
+        }
+
         this.http.get('http://wiki.nayanova.edu/api.php?action=weekSchedule&groupId='
             + this.selectedGroup.StudentGroupId + '&week=' + this.selectedWeek)
             .map(res => res.json())

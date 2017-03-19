@@ -7,6 +7,7 @@
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
     "ionic:build": "ionic-app-scripts build",
+    "ionic:build:prod": "ionic-app-scripts build --prod",
     "ionic:serve": "ionic-app-scripts serve",
     "watch": "ionic-app-scripts watch"
   },
@@ -20,14 +21,16 @@
     "@angular/platform-browser": "2.2.1",
     "@angular/platform-browser-dynamic": "2.2.1",
     "@angular/platform-server": "2.2.1",
-    "@ionic/storage": "1.1.7",
+    "@ionic/storage": "2.0.1",
     "ionic-angular": "2.0.1",
     "ionic-native": "2.4.1",
     "ionicons": "3.0.0",
+    "localforage": "1.4.3",
+    "localforage-cordovasqlitedriver": "^1.6.0",
+    "moment": "2.18.0",
     "rxjs": "5.0.0-beta.12",
     "sw-toolbox": "3.4.0",
-    "zone.js": "0.6.26",
-    "moment": "2.18.0"
+    "zone.js": "0.6.26"
   },
   "devDependencies": {
     "@ionic/app-scripts": "1.1.0",
@@ -44,6 +47,8 @@
   ],
   "cordovaPlatforms": [],
   "-vs-binding": {
-    "BeforeBuild": [ "ionic:build" ]
+    "BeforeBuild": [
+      "ionic:build"
+    ]
   }
 }

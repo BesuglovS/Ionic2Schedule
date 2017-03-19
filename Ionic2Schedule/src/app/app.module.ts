@@ -1,5 +1,6 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicStorageModule } from '@ionic/storage';
 import { MyApp } from './app.component';
 import { TabsPage } from '../pages/tabs/tabs';
 import { GroupSchedulePage } from "../pages/group-schedule/group-schedule";
@@ -13,7 +14,8 @@ import { TeacherSchedulePage } from "../pages/teacher-schedule/teacher-schedule"
         TeacherSchedulePage
     ],
     imports: [
-        IonicModule.forRoot(MyApp)
+        IonicModule.forRoot(MyApp),
+        IonicStorageModule.forRoot()
     ],
     bootstrap: [IonicApp],
     entryComponents: [
