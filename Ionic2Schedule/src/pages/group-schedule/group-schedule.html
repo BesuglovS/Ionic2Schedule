@@ -1,0 +1,76 @@
+﻿<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Расписание группы
+            <span *ngIf="selectedGroup !== undefined && selectedGroup !== null">
+                - {{selectedGroup.Name}}
+            </span>
+            <span *ngIf="selectedWeek !== null">
+                ({{selectedWeek}})
+            </span>
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-card>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row>
+                    <ion-col>
+                        <ion-item>
+                            <ion-select style="margin: auto;"
+                                        class="maxWidth100"
+                                        [(ngModel)]="selectedGroup"
+                                        (ngModelChange)="updateSchedule()"
+                                        cancelText="Отмена">
+                                <ion-option *ngFor="let group of groupList" [value]="group">{{group.Name}}</ion-option>
+                            </ion-select>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col style="text-align: center;">
+                        <ion-item>
+                            <ion-select style="margin: auto;"
+                                        [(ngModel)]="selectedWeek"
+                                        (ngModelChange)="updateSchedule()"
+                                        cancelText="Отмена">
+                                <ion-option *ngFor="let week of weekList" [value]="week">{{week}}</ion-option>
+                            </ion-select>
+                        </ion-item>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="schedule !== undefined && schedule.length == 0">
+        <ion-card-content>
+            <h2>Занятий нет</h2>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngFor="let dowSchedule of schedule">
+        <ion-card-content>
+            <ion-card-header>
+                {{ dowSchedule.dowString }} - {{ dowSchedule.Lessons[0].date }}
+            </ion-card-header>
+            <ion-grid>
+                <ion-row *ngFor="let lesson of dowSchedule.Lessons">
+                    <ion-col style="font-size: 2em; display: flex; align-items: center;justify-content: center;">
+                        {{ lesson.Time }}
+                    </ion-col>
+                    <ion-col style="vertical-align: middle;">
+                        {{lesson.discName}}
+                        <span *ngIf="selectedGroup.Name !== lesson.groupName">
+                            ({{lesson.groupName}})
+                        </span>
+                        <br />
+                        {{lesson.FIO}}<br />
+                        {{lesson.audName}}
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-card-content>
+    </ion-card>
+
+</ion-content>
